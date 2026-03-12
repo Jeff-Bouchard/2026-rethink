@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Server runtime files
+*.pid
+.demo_server.pid
+.shop_server.pid
+
+# Server logs
+*.log
+demo_server.log
+shop_server.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
+
+# Database files
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

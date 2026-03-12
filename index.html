@@ -7,20 +7,36 @@
   <meta name="description" content="Technical demonstration of Privateness.network with integrated PayRam payments layer for sovereign agent and human commerce." />
   <style>
     :root {
-      --bg-0: #05070b;
-      --bg-1: #0b1119;
-      --bg-2: #0f1724;
-      --card: #0d1520;
-      --card-2: #101a29;
-      --text: #e8eef7;
-      --muted: #91a2ba;
-      --line: #243449;
-      --sky: #40c0ff;
+      /* Emercoin-inspired palette with Privateness.network accents */
+      --emc-blue: #2166ad;
+      --emc-blue-light: #3d8fd9;
+      --emc-blue-dark: #1a4d7f;
+      --emc-green: #0e7759;
+      --emc-green-light: #1a9d7a;
+      --emc-green-dark: #0a5a42;
+      
+      --bg-0: #030508;
+      --bg-1: #0a0f16;
+      --bg-2: #0f1621;
+      --card: #0d1419;
+      --card-hover: #12191f;
+      --text: #e9eff8;
+      --text-soft: #d4dce8;
+      --muted: #8a9bb5;
+      --line: #1e2f45;
+      --line-light: #2a3f5a;
+      
+      --primary: var(--emc-blue);
+      --primary-light: var(--emc-blue-light);
+      --primary-dark: var(--emc-blue-dark);
+      --accent: var(--emc-green);
+      --accent-light: var(--emc-green-light);
+      
+      --sky: #42c2ff;
       --amber: #ffba52;
-      --mint: #26d7a1;
-      --violet: #a98bff;
+      --violet: #aa8dff;
       --danger: #ff6474;
-      --ok: #6cf0a2;
+      --success: #1a9d7a;
       --warn: #ffba52;
     }
 
@@ -28,14 +44,17 @@
     html, body { margin: 0; padding: 0; }
 
     body {
-      font-family: "Segoe UI", Inter, "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(1100px 640px at 85% -10%, rgba(33, 102, 173, 0.25), transparent 62%),
-        radial-gradient(900px 500px at -8% 12%, rgba(14, 119, 89, 0.22), transparent 56%),
-        linear-gradient(180deg, var(--bg-0), var(--bg-1) 26%, var(--bg-0));
-      line-height: 1.55;
-      letter-spacing: 0.1px;
+        radial-gradient(1200px 700px at 88% -12%, rgba(33, 102, 173, 0.18), transparent 65%),
+        radial-gradient(950px 550px at -10% 15%, rgba(14, 119, 89, 0.15), transparent 58%),
+        radial-gradient(800px 600px at 50% 100%, rgba(26, 77, 127, 0.08), transparent 70%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 30%, var(--bg-0));
+      line-height: 1.6;
+      letter-spacing: 0.2px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
@@ -47,9 +66,11 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(6, 10, 16, 0.86);
-      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(10, 15, 22, 0.92), rgba(10, 15, 22, 0.88));
+      backdrop-filter: blur(16px) saturate(180%);
       border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 0 rgba(33, 102, 173, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .topbar-inner {
@@ -62,14 +83,33 @@
     }
 
     .brand {
-      font-weight: 800;
-      font-size: 1.02rem;
-      letter-spacing: 0.45px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
       white-space: nowrap;
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-soft) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: all 0.3s ease;
     }
 
-    .brand .accent { color: var(--sky); }
-    .brand .payram { color: var(--violet); }
+    .brand:hover {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand .accent { 
+      color: var(--primary-light);
+      font-weight: 600;
+    }
+    
+    .brand .payram { 
+      color: var(--accent-light);
+      font-weight: 600;
+    }
 
     nav {
       display: flex;
@@ -82,16 +122,53 @@
       text-decoration: none;
       color: var(--muted);
       font-size: 0.92rem;
+      font-weight: 500;
       border: 1px solid transparent;
-      border-radius: 8px;
-      padding: 6px 10px;
-      transition: 120ms ease;
+      border-radius: 10px;
+      padding: 7px 13px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    nav a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.1), rgba(14, 119, 89, 0.1));
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
 
     nav a:hover {
       color: var(--text);
-      border-color: var(--line);
-      background: #111b2a;
+      border-color: var(--line-light);
+      background: rgba(18, 25, 31, 0.6);
+      transform: translateY(-1px);
+    }
+
+    nav a:hover::before {
+      opacity: 1;
+    }
+
+    nav a.shop-link {
+      color: #ffffff;
+      font-weight: 700;
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.32), rgba(14, 119, 89, 0.24));
+      box-shadow: 0 6px 18px rgba(33, 102, 173, 0.18);
+    }
+
+    nav a.shop-link::before {
+      opacity: 1;
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.18), rgba(14, 119, 89, 0.18));
+    }
+
+    nav a.shop-link:hover {
+      border-color: var(--primary-light);
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.46), rgba(14, 119, 89, 0.30));
+      box-shadow: 0 10px 26px rgba(33, 102, 173, 0.28);
+      transform: translateY(-2px);
     }
 
     section {
@@ -106,7 +183,10 @@
 
     .eyebrow {
       display: inline-block;
-      color: var(--sky);
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       text-transform: uppercase;
       font-weight: 700;
       font-size: 0.75rem;
@@ -119,6 +199,10 @@
       max-width: 16ch;
       line-height: 1.08;
       font-size: clamp(2rem, 5vw, 4.35rem);
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-soft) 50%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .hero-copy {
@@ -135,22 +219,91 @@
       flex-wrap: wrap;
     }
 
+    .privacy-banner {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .privacy-pill {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: linear-gradient(180deg, rgba(13, 20, 25, 0.96), rgba(10, 15, 22, 0.96));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .privacy-pill strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .privacy-pill span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
     .button {
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid var(--line);
-      padding: 11px 14px;
+      padding: 12px 18px;
       color: var(--text);
-      background: #0f1826;
+      background: linear-gradient(180deg, var(--card-hover), var(--card));
       font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.15), rgba(14, 119, 89, 0.15));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-light);
+      box-shadow: 0 8px 24px rgba(33, 102, 173, 0.15);
+    }
+
+    .button:hover::before {
+      opacity: 1;
     }
 
     .button.primary {
-      background: linear-gradient(180deg, #183456, #10233b);
-      border-color: #2e537f;
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      border-color: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(33, 102, 173, 0.2);
+    }
+
+    .button.primary:hover {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      box-shadow: 0 8px 24px rgba(33, 102, 173, 0.35);
+    }
+
+    .button.shop-cta {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-color: var(--accent-light);
+      color: #ffffff;
+      box-shadow: 0 10px 30px rgba(14, 119, 89, 0.22);
+    }
+
+    .button.shop-cta:hover {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      box-shadow: 0 14px 34px rgba(14, 119, 89, 0.32);
     }
 
     .impact-grid,
@@ -181,20 +334,66 @@
     .layer {
       border-radius: 16px;
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, var(--card-2), var(--card));
-      padding: 16px;
+      background: linear-gradient(180deg, var(--card-hover), var(--card));
+      padding: 18px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before,
+    .phase::before,
+    .meta-block::before,
+    .impact::before,
+    .layer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.05), rgba(14, 119, 89, 0.05));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .card:hover,
+    .phase:hover,
+    .meta-block:hover,
+    .impact:hover,
+    .layer:hover {
+      border-color: var(--line-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .card:hover::before,
+    .phase:hover::before,
+    .meta-block:hover::before,
+    .impact:hover::before,
+    .layer:hover::before {
+      opacity: 1;
     }
 
     .impact .label,
     .phase-id,
     .tag {
       display: inline-block;
-      border: 1px solid #36556f;
+      border: 1px solid var(--primary-dark);
       border-radius: 999px;
-      padding: 4px 8px;
-      color: #a4dbff;
+      padding: 5px 10px;
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.15), rgba(14, 119, 89, 0.15));
+      color: var(--primary-light);
       font-size: 0.74rem;
+      font-weight: 600;
       margin-bottom: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .impact .label:hover,
+    .phase-id:hover,
+    .tag:hover {
+      background: linear-gradient(135deg, rgba(33, 102, 173, 0.25), rgba(14, 119, 89, 0.25));
+      border-color: var(--primary);
+      transform: scale(1.05);
     }
 
     .impact .value {
@@ -205,6 +404,10 @@
     .section-title {
       margin: 0 0 8px;
       font-size: clamp(1.4rem, 3vw, 2.05rem);
+      background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .section-sub {
@@ -357,8 +560,10 @@
     }
 
     @media (max-width: 720px) {
+      .container { width: min(94vw, 100%); }
       .topbar-inner { align-items: flex-start; }
       nav { justify-content: flex-start; }
+      .privacy-banner { grid-template-columns: 1fr; }
       .impact-grid,
       .stack-grid,
       .payram-grid,
@@ -376,6 +581,7 @@
     <div class="container topbar-inner">
       <div class="brand">Privateness<span class="accent">.network</span> × <span class="payram">PayRam</span></div>
       <nav>
+        <a class="shop-link" href="shop.html">Open Shop</a>
         <a href="#thesis">Thesis</a>
         <a href="#stack">Stack</a>
         <a href="#payram">PayRam Layer</a>
@@ -389,28 +595,47 @@
 
   <main>
     <section id="thesis" class="hero container">
-      <span class="eyebrow">Sovereign Infra + Sovereign Commerce</span>
-      <h1>The post-ICANN, post-ISP stack needs a native payment rail.</h1>
+      <span class="eyebrow">Privateness.network · Sovereignty by design</span>
+      <h1>Privateness.network turns privacy, routing autonomy, naming control, and sovereign commerce into one operator-owned stack.</h1>
       <p class="hero-copy">
-        Privateness.network owns the security-critical substrate: transport via Skywire, naming and trust anchors via Emercoin, and isolated execution via NESS. PayRam fits above that substrate as the sovereign payments and settlement layer for human checkout, agent commerce, payouts, webhooks, and treasury automation.
+        This is a Privateness.network thesis first: remove ISP trust, remove ICANN dependency, remove hosted processor dependence, and collapse transport, naming, execution, and settlement into a stack the operator actually controls. Skywire hardens the path, Emercoin anchors naming and trust, NESS isolates execution, and PayRam monetizes that sovereignty without surrendering custody or telemetry.
+      </p>
+      <p class="hero-copy">
+        The live commerce surface is already operational through the sovereign storefront: direct XBTSX.NCH checkout, SQLite-backed order state, and operator-controlled settlement flows with no SaaS intermediary sitting in the middle of the money path.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href="#stack">Inspect architecture</a>
+        <a class="button primary shop-cta" href="shop.html">Enter the Sovereign Shop</a>
+        <a class="button primary" href="#stack">Inspect the Privateness Stack</a>
         <a class="button" href="#flow">View payment flow</a>
+      </div>
+
+      <div class="privacy-banner">
+        <div class="privacy-pill">
+          <strong>No platform gatekeeper</strong>
+          <span>Commerce is run on operator infrastructure, not rented approval.</span>
+        </div>
+        <div class="privacy-pill">
+          <strong>No custodial dependency</strong>
+          <span>Settlement flows stay under sovereign control instead of third-party custody.</span>
+        </div>
+        <div class="privacy-pill">
+          <strong>No surveillance default</strong>
+          <span>SQLite-backed order state and self-hosted services minimize leakage.</span>
+        </div>
       </div>
 
       <div class="impact-grid">
         <article class="impact">
-          <div class="label">Base Threat Model</div>
-          <div class="value" style="color: var(--danger);">State hostile network + naming interference</div>
+          <div class="label">Privateness Threat Model</div>
+          <div class="value" style="color: var(--danger);">State-hostile routing, naming capture, hosted payment censorship</div>
         </article>
         <article class="impact">
-          <div class="label">Core Response</div>
-          <div class="value" style="color: var(--sky);">Own transport, resolution, execution</div>
+          <div class="label">Sovereign Response</div>
+          <div class="value" style="color: var(--sky);">Own transport, own naming, own execution, own settlement</div>
         </article>
         <article class="impact">
-          <div class="label">Commercial Response</div>
-          <div class="value" style="color: var(--violet);">Self-hosted PayRam gateway + MCP automation</div>
+          <div class="label">Operator Revenue Surface</div>
+          <div class="value" style="color: var(--violet);">Self-hosted PayRam gateway + sovereign NESS shop + MCP automation</div>
         </article>
       </div>
     </section>
@@ -467,11 +692,11 @@
       <div class="architecture">
         <div class="architecture-row">
           <div class="architecture-label">Security Base</div>
-          <div class="architecture-value">Skywire + EMC + NESS define routing privacy, naming trust, and execution guarantees.</div>
+          <div class="architecture-value">Skywire + EMC + NESS define routing privacy, naming sovereignty, trust anchoring, and execution guarantees under operator control.</div>
         </div>
         <div class="architecture-row">
           <div class="architecture-label">Payments Surface</div>
-          <div class="architecture-value">PayRam exposes payment links, invoices, monitoring, payouts, and webhook/event handling as a self-hosted service.</div>
+          <div class="architecture-value">PayRam exposes payment links, invoices, monitoring, payouts, and webhook/event handling as a self-hosted service tied to the Privateness.network control plane.</div>
         </div>
         <div class="architecture-row">
           <div class="architecture-label">Agent Interface</div>
@@ -479,7 +704,7 @@
         </div>
         <div class="architecture-row">
           <div class="architecture-label">Strategic Positioning</div>
-          <div class="architecture-value">Privateness.network remains the infrastructure monopoly thesis. PayRam is the operator-owned commerce primitive that monetizes that infrastructure.</div>
+          <div class="architecture-value">Privateness.network is the actual product thesis: privacy-preserving infrastructure with sovereign monetization. PayRam is the commerce primitive that turns that thesis into revenue without surrendering control.</div>
         </div>
       </div>
     </section>

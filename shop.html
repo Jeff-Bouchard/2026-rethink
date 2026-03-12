@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NESS Shop — Pay with XBTSX.NCH</title>
-  <meta name="description" content="Sovereign commerce demo: shopping cart paid in XBTSX.NCH (NESS Coin Hours) on XBTS DEX" />
+  <title>NESS Shop — Sovereign Commerce</title>
+  <meta name="description" content="Public-facing sovereign commerce with XBTSX.NCH payments and SQLite backend" />
   <style>
     :root {
       --bg-0: #06080d;
@@ -64,6 +64,27 @@
 
     .brand .accent { color: var(--sky); }
 
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-config {
+      background: linear-gradient(180deg, #1a3456, #12273d);
+      border: 1px solid #2e537f;
+      border-radius: 10px;
+      padding: 10px 16px;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: 120ms ease;
+    }
+
+    .btn-config:hover {
+      background: linear-gradient(180deg, #1e3d5f, #15304a);
+    }
+
     .cart-toggle {
       background: linear-gradient(180deg, #1a3456, #12273d);
       border: 1px solid #2e537f;
@@ -95,6 +116,23 @@
       padding: 40px 0 60px;
     }
 
+    .setup-required {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .setup-required h2 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+
+    .setup-required p {
+      color: var(--muted);
+      margin-bottom: 24px;
+      max-width: 60ch;
+      margin-inline: auto;
+    }
+
     .hero {
       text-align: center;
       padding: 32px 0 48px;
@@ -113,7 +151,7 @@
       margin-inline: auto;
     }
 
-    .payment-badge {
+    .merchant-info {
       display: inline-block;
       margin-top: 16px;
       padding: 8px 14px;
@@ -412,7 +450,7 @@
       background: var(--bg-1);
       border: 1px solid var(--line);
       border-radius: 18px;
-      width: min(540px, 100%);
+      width: min(640px, 100%);
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -436,6 +474,85 @@
       padding: 24px;
     }
 
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .form-group label .required {
+      color: var(--danger);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: 120ms ease;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--sky);
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .product-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .product-item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-add-product {
+      width: 100%;
+      background: var(--card);
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      color: var(--sky);
+      font-weight: 600;
+      cursor: pointer;
+      transition: 120ms ease;
+    }
+
+    .btn-add-product:hover {
+      border-color: var(--sky);
+      background: rgba(66, 194, 255, 0.05);
+    }
+
     .order-summary {
       background: var(--card);
       border: 1px solid var(--line);
@@ -445,12 +562,11 @@
     }
 
     .order-summary h3 {
-      font-size: 1rem;
+      font-size: 0.85rem;
       margin-bottom: 12px;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      font-size: 0.85rem;
     }
 
     .order-item {
@@ -510,19 +626,26 @@
       word-break: break-all;
     }
 
-    .payment-qr {
-      width: 200px;
-      height: 200px;
-      background: white;
+    .payment-instructions {
+      background: var(--card);
+      border: 1px solid var(--line);
       border-radius: 12px;
-      margin: 16px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      color: #333;
-      text-align: center;
-      padding: 20px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .payment-instructions h4 {
+      margin-bottom: 12px;
+      color: var(--amber);
+    }
+
+    .payment-instructions ol {
+      margin-left: 20px;
+      color: var(--muted);
+    }
+
+    .payment-instructions li {
+      margin-bottom: 8px;
     }
 
     .payment-status {
@@ -537,7 +660,6 @@
 
     .status-pending { color: var(--amber); }
     .status-success { color: var(--success); }
-    .status-error { color: var(--danger); }
 
     .modal-actions {
       padding: 20px 24px;
@@ -583,6 +705,12 @@
       border-top: 1px solid rgba(36, 52, 73, 0.4);
     }
 
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
     @media (max-width: 720px) {
       .products {
         grid-template-columns: 1fr;
@@ -594,23 +722,17 @@
   <header class="header">
     <div class="container header-inner">
       <div class="brand">NESS <span class="accent">Shop</span></div>
-      <button class="cart-toggle" onclick="toggleCart()">
-        🛒 Cart <span class="cart-badge" id="cart-count">0</span>
-      </button>
+      <div class="header-actions">
+        <button class="btn-config" onclick="openConfig()">⚙️ Configure</button>
+        <button class="cart-toggle" onclick="toggleCart()">
+          🛒 Cart <span class="cart-badge" id="cart-count">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="main container">
-    <section class="hero">
-      <h1>Sovereign Commerce Demo</h1>
-      <p>
-        Shopping cart powered by Privateness.network infrastructure with XBTSX.NCH payment settlement.
-        All payments processed through self-hosted PayRam gateway.
-      </p>
-      <div class="payment-badge">💎 Accepts XBTSX.NCH (NESS Coin Hours)</div>
-    </section>
-
-    <section class="products" id="products"></section>
+  <main class="main container" id="main-content">
+    <div class="loading">Loading shop...</div>
   </main>
 
   <aside class="cart-sidebar" id="cart-sidebar">
@@ -632,6 +754,57 @@
     </div>
   </aside>
 
+  <div class="modal-overlay" id="config-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Shop Configuration</h2>
+        <p>Configure your sovereign commerce instance</p>
+      </div>
+      <div class="modal-body">
+        <form id="config-form">
+          <div class="form-group">
+            <label>Shop Name <span class="required">*</span></label>
+            <input type="text" id="shop-name" required placeholder="e.g., NESS Services" />
+            <small>Your shop's display name</small>
+          </div>
+
+          <div class="form-group">
+            <label>Shop Description <span class="required">*</span></label>
+            <textarea id="shop-desc" required placeholder="Brief description of your shop and services"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>XBTS Payment Address <span class="required">*</span></label>
+            <input type="text" id="payment-address" required placeholder="your-xbts-account-name" />
+            <small>Your XBTS account name where payments will be sent</small>
+          </div>
+
+          <div class="form-group">
+            <label>Payment Memo Prefix</label>
+            <input type="text" id="payment-memo" placeholder="ORDER" value="ORDER" />
+            <small>Prefix for payment memos (e.g., ORDER-12345)</small>
+          </div>
+
+          <div class="form-group">
+            <label>Webhook URL (Optional)</label>
+            <input type="url" id="webhook-url" placeholder="https://your-server.com/webhook" />
+            <small>URL to receive payment notifications (must be publicly accessible)</small>
+          </div>
+
+          <div class="form-group">
+            <label>Products <span class="required">*</span></label>
+            <div class="product-list" id="product-list"></div>
+            <button type="button" class="btn-add-product" onclick="addProductField()">+ Add Product</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeConfig()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveConfig()">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="checkout-modal">
     <div class="modal">
       <div class="modal-header">
@@ -646,81 +819,247 @@
   </div>
 
   <footer class="footer container">
-    <div>NESS Shop — Sovereign commerce on Privateness.network × PayRam × XBTS DEX</div>
+    <div>NESS Shop — Sovereign commerce powered by SQLite + XBTS DEX</div>
   </footer>
 
-  <script id="product-catalog" type="application/json">
-  [
-    {
-      "id": "ness-relay-access",
-      "name": "NESS Relay Access",
-      "desc": "30-day premium relay node access",
-      "price": 100,
-      "emoji": "🌐"
-    },
-    {
-      "id": "emc-domain",
-      "name": "EMC Domain Registration",
-      "desc": "1-year .emc domain via NVS",
-      "price": 250,
-      "emoji": "🔐"
-    },
-    {
-      "id": "skywire-bandwidth",
-      "name": "Skywire Bandwidth Pack",
-      "desc": "100GB encrypted mesh transit",
-      "price": 75,
-      "emoji": "⚡"
-    },
-    {
-      "id": "ness-compute",
-      "name": "NESS Compute Credits",
-      "desc": "Isolated execution environment",
-      "price": 500,
-      "emoji": "💻"
-    },
-    {
-      "id": "payram-integration",
-      "name": "PayRam Integration Kit",
-      "desc": "Self-hosted gateway setup guide",
-      "price": 150,
-      "emoji": "💳"
-    },
-    {
-      "id": "security-audit",
-      "name": "Security Audit Report",
-      "desc": "Infrastructure security assessment",
-      "price": 1000,
-      "emoji": "🛡️"
-    }
-  ]
-  </script>
-
   <script>
-    const XBTS_NCH_ADDRESS = 'xbtsx-nch-merchant-demo-001';
-    const PAYMENT_MEMO = 'NESS-SHOP-ORDER';
-
-    let cart = [];
+    const API_BASE = '/api';
+    
+    let config = null;
     let products = [];
+    let cart = [];
     let currentOrder = null;
+    let productCounter = 0;
 
-    function init() {
-      const catalogData = document.getElementById('product-catalog');
+    async function api(endpoint, options = {}) {
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers
+        }
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'API request failed');
+      }
+      
+      return response.json();
+    }
+
+    async function init() {
       try {
-        products = JSON.parse(catalogData.textContent);
-        renderProducts();
+        await loadConfig();
+        await loadProducts();
+        
+        if (config && config.shop_name) {
+          renderShop();
+        } else {
+          showSetupRequired();
+        }
       } catch (err) {
-        console.error('Failed to load product catalog', err);
+        console.error('Init error:', err);
+        showSetupRequired();
       }
     }
 
-    function renderProducts() {
-      const container = document.getElementById('products');
-      container.innerHTML = products.map(product => `
+    async function loadConfig() {
+      try {
+        const data = await api('/config');
+        if (data && !data.configured) {
+          config = null;
+        } else {
+          config = data;
+        }
+      } catch (err) {
+        console.error('Failed to load config:', err);
+        config = null;
+      }
+    }
+
+    async function loadProducts() {
+      try {
+        products = await api('/products');
+      } catch (err) {
+        console.error('Failed to load products:', err);
+        products = [];
+      }
+    }
+
+    function showSetupRequired() {
+      const mainContent = document.getElementById('main-content');
+      mainContent.innerHTML = `
+        <div class="setup-required">
+          <h2>⚙️ Configuration Required</h2>
+          <p>
+            Configure your sovereign commerce instance with merchant details, XBTS payment address, and product catalog.
+            All data stored in secure SQLite database.
+          </p>
+          <button class="btn-config" onclick="openConfig()" style="font-size: 1.1rem; padding: 14px 24px;">
+            Configure Shop
+          </button>
+        </div>
+      `;
+    }
+
+    async function openConfig() {
+      const modal = document.getElementById('config-modal');
+      
+      if (config) {
+        document.getElementById('shop-name').value = config.shop_name || '';
+        document.getElementById('shop-desc').value = config.shop_description || '';
+        document.getElementById('payment-address').value = config.payment_address || '';
+        document.getElementById('payment-memo').value = config.payment_memo_prefix || 'ORDER';
+        document.getElementById('webhook-url').value = config.webhook_url || '';
+        
+        const productList = document.getElementById('product-list');
+        productList.innerHTML = '';
+        
+        if (products.length > 0) {
+          products.forEach(product => {
+            addProductField(product);
+          });
+        } else {
+          addProductField();
+        }
+      } else {
+        addProductField();
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function closeConfig() {
+      const modal = document.getElementById('config-modal');
+      modal.classList.remove('active');
+    }
+
+    function addProductField(product = null) {
+      const productList = document.getElementById('product-list');
+      const id = product ? product.id : `product-${Date.now()}-${++productCounter}`;
+      
+      const item = document.createElement('div');
+      item.className = 'product-item';
+      item.dataset.id = id;
+      item.innerHTML = `
+        <input type="text" placeholder="🎁" maxlength="2" value="${product ? product.emoji : ''}" 
+               style="width: 60px; text-align: center; font-size: 2rem; padding: 8px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px;" 
+               data-field="emoji" />
+        <div style="display: grid; gap: 8px;">
+          <input type="text" placeholder="Product name" value="${product ? product.name : ''}" 
+                 style="background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px; color: var(--text);" 
+                 data-field="name" required />
+          <input type="text" placeholder="Description" value="${product ? product.description || '' : ''}" 
+                 style="background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px; color: var(--text); font-size: 0.88rem;" 
+                 data-field="desc" />
+        </div>
+        <div style="display: grid; gap: 8px; text-align: right;">
+          <input type="number" placeholder="Price" value="${product ? product.price : ''}" min="0" step="0.01" 
+                 style="width: 100px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px; color: var(--violet); font-weight: 700; text-align: right;" 
+                 data-field="price" required />
+          <button type="button" class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.85rem;" onclick="removeProductField('${id}')">Remove</button>
+        </div>
+      `;
+      
+      productList.appendChild(item);
+    }
+
+    function removeProductField(id) {
+      const item = document.querySelector(`[data-id="${id}"]`);
+      if (item) item.remove();
+    }
+
+    async function saveConfig() {
+      const shopName = document.getElementById('shop-name').value.trim();
+      const shopDesc = document.getElementById('shop-desc').value.trim();
+      const paymentAddress = document.getElementById('payment-address').value.trim();
+      const paymentMemo = document.getElementById('payment-memo').value.trim() || 'ORDER';
+      const webhookUrl = document.getElementById('webhook-url').value.trim();
+
+      if (!shopName || !shopDesc || !paymentAddress) {
+        alert('Please fill in all required fields (Shop Name, Description, Payment Address)');
+        return;
+      }
+
+      const productItems = document.querySelectorAll('.product-item');
+      const productData = [];
+      
+      for (const item of productItems) {
+        const emoji = item.querySelector('[data-field="emoji"]').value.trim() || '📦';
+        const name = item.querySelector('[data-field="name"]').value.trim();
+        const desc = item.querySelector('[data-field="desc"]').value.trim();
+        const price = parseFloat(item.querySelector('[data-field="price"]').value);
+        
+        if (!name || !price || price <= 0) {
+          alert('Each product must have a name and valid price');
+          return;
+        }
+        
+        productData.push({
+          id: item.dataset.id,
+          emoji,
+          name,
+          description: desc,
+          price
+        });
+      }
+
+      if (productData.length === 0) {
+        alert('Please add at least one product');
+        return;
+      }
+
+      try {
+        await api('/config', {
+          method: 'POST',
+          body: JSON.stringify({
+            shop_name: shopName,
+            shop_description: shopDesc,
+            payment_address: paymentAddress,
+            payment_memo_prefix: paymentMemo,
+            webhook_url: webhookUrl
+          })
+        });
+
+        for (const product of productData) {
+          try {
+            await api('/products', {
+              method: 'POST',
+              body: JSON.stringify(product)
+            });
+          } catch (err) {
+            console.error('Product save error:', err);
+          }
+        }
+
+        await loadConfig();
+        await loadProducts();
+        closeConfig();
+        renderShop();
+      } catch (err) {
+        alert(`Failed to save configuration: ${err.message}`);
+      }
+    }
+
+    function renderShop() {
+      const mainContent = document.getElementById('main-content');
+      
+      mainContent.innerHTML = `
+        <section class="hero">
+          <h1>${config.shop_name}</h1>
+          <p>${config.shop_description}</p>
+          <div class="merchant-info">💎 Accepts XBTSX.NCH (NESS Coin Hours)</div>
+        </section>
+        <section class="products" id="products"></section>
+      `;
+
+      const productsContainer = document.getElementById('products');
+      productsContainer.innerHTML = products.map(product => `
         <article class="product-card" onclick="addToCart('${product.id}')">
           <div class="product-image">${product.emoji}</div>
           <h3 class="product-name">${product.name}</h3>
-          <p class="product-desc">${product.desc}</p>
+          <p class="product-desc">${product.description || ''}</p>
           <div class="product-footer">
             <div class="product-price">
               ${product.price} <small>NCH</small>
@@ -774,7 +1113,7 @@
       const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
       cartCount.textContent = totalItems;
-      cartTotal.textContent = `${totalPrice} NCH`;
+      cartTotal.textContent = `${totalPrice.toFixed(2)} NCH`;
 
       if (cart.length === 0) {
         cartBody.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
@@ -804,18 +1143,28 @@
       sidebar.classList.toggle('open');
     }
 
-    function checkout() {
-      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    async function checkout() {
+      if (!config || cart.length === 0) return;
       
-      currentOrder = {
-        id: 'ORDER-' + Date.now(),
-        items: [...cart],
-        total: totalPrice,
-        timestamp: new Date().toISOString(),
-        status: 'pending'
-      };
+      try {
+        const orderData = {
+          items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+          }))
+        };
 
-      showCheckoutModal();
+        currentOrder = await api('/orders', {
+          method: 'POST',
+          body: JSON.stringify(orderData)
+        });
+
+        showCheckoutModal();
+      } catch (err) {
+        alert(`Checkout failed: ${err.message}`);
+      }
     }
 
     function showCheckoutModal() {
@@ -827,109 +1176,66 @@
           <h3>Order Summary</h3>
           ${currentOrder.items.map(item => `
             <div class="order-item">
-              <span>${item.name} × ${item.quantity}</span>
-              <span class="order-item-price">${item.price * item.quantity} NCH</span>
+              <span>${item.product_name} × ${item.quantity}</span>
+              <span class="order-item-price">${item.subtotal.toFixed(2)} NCH</span>
             </div>
           `).join('')}
           <div class="order-item">
             <span>Total</span>
-            <span class="order-item-price">${currentOrder.total} NCH</span>
+            <span class="order-item-price">${currentOrder.total_amount.toFixed(2)} NCH</span>
           </div>
         </div>
 
         <div class="payment-info">
           <h3>Payment Instructions</h3>
           <div class="payment-field">
-            <label>Send To (XBTS Address)</label>
-            <div class="payment-field-value">${XBTS_NCH_ADDRESS}</div>
+            <label>Send To (XBTS Account)</label>
+            <div class="payment-field-value">${currentOrder.payment_address}</div>
           </div>
           <div class="payment-field">
             <label>Amount</label>
-            <div class="payment-field-value">${currentOrder.total} XBTSX.NCH</div>
+            <div class="payment-field-value">${currentOrder.total_amount.toFixed(2)} XBTSX.NCH</div>
           </div>
           <div class="payment-field">
             <label>Memo / Reference</label>
-            <div class="payment-field-value">${PAYMENT_MEMO}-${currentOrder.id}</div>
+            <div class="payment-field-value">${currentOrder.payment_memo}</div>
           </div>
-          <div class="payment-qr">
-            QR Code Placeholder<br/>
-            <small style="color: #666;">Scan to pay with XBTS wallet</small>
-          </div>
+        </div>
+
+        <div class="payment-instructions">
+          <h4>⚠️ How to Complete Payment</h4>
+          <ol>
+            <li>Open your XBTS wallet or exchange account</li>
+            <li>Send <strong>${currentOrder.total_amount.toFixed(2)} XBTSX.NCH</strong> to account: <strong>${currentOrder.payment_address}</strong></li>
+            <li>Include memo: <strong>${currentOrder.payment_memo}</strong></li>
+            <li>Wait for blockchain confirmation (usually 1-3 minutes)</li>
+            <li>Merchant will verify payment and fulfill order</li>
+          </ol>
         </div>
 
         <div class="payment-status">
           <div class="status-icon status-pending">⏳</div>
-          <p style="color: var(--muted);">Waiting for payment confirmation...</p>
+          <p style="color: var(--muted);">Waiting for payment...</p>
           <p style="font-size: 0.85rem; color: var(--muted); margin-top: 8px;">
             Order ID: ${currentOrder.id}
+          </p>
+          <p style="font-size: 0.85rem; color: var(--sky); margin-top: 4px;">
+            ✓ Order saved to database
           </p>
         </div>
       `;
 
       modalBody.innerHTML = orderSummaryHTML;
       modal.classList.add('active');
-
-      simulatePaymentConfirmation();
-    }
-
-    function simulatePaymentConfirmation() {
-      setTimeout(() => {
-        currentOrder.status = 'confirmed';
-        showPaymentSuccess();
-      }, 5000);
-    }
-
-    function showPaymentSuccess() {
-      const modalBody = document.getElementById('modal-body');
-      const modalActions = document.getElementById('modal-actions');
-
-      modalBody.innerHTML = `
-        <div class="payment-status">
-          <div class="status-icon status-success">✅</div>
-          <h3 style="margin-bottom: 8px;">Payment Confirmed!</h3>
-          <p style="color: var(--muted); margin-bottom: 16px;">
-            Your order has been successfully processed.
-          </p>
-          <div class="order-summary">
-            <h3>Order Details</h3>
-            <div class="order-item">
-              <span>Order ID</span>
-              <span>${currentOrder.id}</span>
-            </div>
-            <div class="order-item">
-              <span>Total Paid</span>
-              <span class="order-item-price">${currentOrder.total} NCH</span>
-            </div>
-            <div class="order-item">
-              <span>Status</span>
-              <span style="color: var(--success);">Confirmed</span>
-            </div>
-          </div>
-          <p style="font-size: 0.9rem; color: var(--muted); margin-top: 16px;">
-            A confirmation email has been sent. Your services will be activated within 24 hours.
-          </p>
-        </div>
-      `;
-
-      modalActions.innerHTML = `
-        <button class="btn btn-primary" onclick="completeOrder()" style="flex: 1;">
-          Continue Shopping
-        </button>
-      `;
-    }
-
-    function completeOrder() {
-      cart = [];
-      currentOrder = null;
-      updateCart();
-      closeCheckout();
-      toggleCart();
     }
 
     function closeCheckout() {
       const modal = document.getElementById('checkout-modal');
       modal.classList.remove('active');
+      cart = [];
       currentOrder = null;
+      updateCart();
+      toggleCart();
     }
 
     document.addEventListener('DOMContentLoaded', init);

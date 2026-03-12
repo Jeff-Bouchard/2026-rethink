@@ -1,0 +1,170 @@
+# NESS Infrastructure Management
+
+Privateness.network demo and NESS Shop infrastructure management tools.
+
+## Quick Start
+
+```bash
+# Start all servers
+./manage.sh start
+
+# Check status
+./manage.sh status
+
+# Stop all servers
+./manage.sh stop
+```
+
+## Management Script
+
+The `manage.sh` script provides complete control over the demo and shop servers.
+
+### Commands
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `start [service]` | Start server(s) | `./manage.sh start demo` |
+| `stop [service]` | Stop server(s) | `./manage.sh stop shop` |
+| `restart [service]` | Restart server(s) | `./manage.sh restart all` |
+| `status [service]` | Show server status | `./manage.sh status` |
+| `logs [service]` | Tail server logs | `./manage.sh logs demo` |
+
+### Services
+
+- **demo** - Privateness.network × PayRam demo (`index.html`)
+- **shop** - NESS Shop with XBTSX.NCH payments (`shop.html`)
+- **all** - All servers (default)
+
+### Examples
+
+```bash
+# Start only the demo server
+./manage.sh start demo
+
+# Stop only the shop server
+./manage.sh stop shop
+
+# Restart all servers
+./manage.sh restart all
+
+# Check status of all servers
+./manage.sh status
+
+# View demo server logs (Ctrl+C to exit)
+./manage.sh logs demo
+
+# View shop server logs
+./manage.sh logs shop
+```
+
+## Server Details
+
+### Demo Server (`server.py`)
+- **File**: `index.html`
+- **Port**: Random (50000-60000)
+- **PID File**: `.demo_server.pid`
+- **Log File**: `demo_server.log`
+
+### Shop Server (`shop_server.py`)
+- **File**: `shop.html`
+- **Port**: Random (50000-60000)
+- **PID File**: `.shop_server.pid`
+- **Log File**: `shop_server.log`
+
+## Features
+
+- ✅ Process management with PID tracking
+- ✅ Graceful shutdown with force-kill fallback
+- ✅ Port detection and display
+- ✅ Color-coded status output
+- ✅ Log tailing support
+- ✅ Individual or bulk server control
+
+## Architecture
+
+### Privateness.network Demo
+- **Stack**: Skywire (Transport) → EMC (Naming) → NESS (Execution) → PayRam (Commerce)
+- **Integration**: PayRam MCP helper for payment workflows
+- **Features**: Architecture overview, payment flow, deployment model, admin dashboard
+
+### NESS Shop
+- **Payment**: XBTSX.NCH (NESS Coin Hours) on XBTS DEX
+- **Features**: Product catalog, shopping cart, checkout flow, order management
+- **Products**: Relay access, EMC domains, Skywire bandwidth, NESS compute, PayRam integration kits
+
+## Git Repository
+
+```bash
+# Initialize repository (if not done)
+git init
+
+# Add files
+git add .
+
+# Commit
+git commit -m "Initial commit: NESS infrastructure with PayRam integration"
+```
+
+## Requirements
+
+- Python 3.x
+- Git Bash (Windows) or Bash (Linux/macOS)
+- Random port range 50000-60000 available
+
+## Troubleshooting
+
+### Server won't start
+```bash
+# Check if port is in use
+./manage.sh status
+
+# Stop all servers and restart
+./manage.sh stop all
+./manage.sh start all
+```
+
+### Check logs for errors
+```bash
+# View demo logs
+cat demo_server.log
+
+# View shop logs
+cat shop_server.log
+
+# Or tail in real-time
+./manage.sh logs demo
+```
+
+### Clean restart
+```bash
+# Stop everything
+./manage.sh stop all
+
+# Remove PID files if stale
+rm -f .demo_server.pid .shop_server.pid
+
+# Start fresh
+./manage.sh start all
+```
+
+## Project Structure
+
+```
+h:\ness.cx\2026-rethink\
+├── manage.sh              # Infrastructure management script
+├── server.py              # Demo server
+├── shop_server.py         # Shop server
+├── index.html             # Privateness.network × PayRam demo
+├── shop.html              # NESS Shop (XBTSX.NCH payments)
+├── ness-pitch.txt         # Original pitch document
+├── ROADMAP.md             # Project roadmap
+├── README.md              # This file
+├── .demo_server.pid       # Demo server PID (runtime)
+├── .shop_server.pid       # Shop server PID (runtime)
+├── demo_server.log        # Demo server logs
+└── shop_server.log        # Shop server logs
+```
+
+## License
+
+Sovereign infrastructure. No gatekeepers.

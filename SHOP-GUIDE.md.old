@@ -1,0 +1,337 @@
+# NESS Shop - User Guide / Guide d'utilisation
+
+**English** | [Français](#guide-en-français)
+
+---
+
+## English Guide
+
+### Overview
+
+NESS Shop is a self-hosted sovereign commerce application that accepts XBTSX.NCH (NESS Coin Hours) payments on the XBTS decentralized exchange. All data is stored locally in your browser - no external servers, no tracking, complete privacy.
+
+### Key Features
+
+- ✅ **No Mocks or Placeholders** - All data comes from your configuration
+- ✅ **Self-Hosted** - Runs entirely on your local machine
+- ✅ **Privacy First** - No external dependencies, no tracking
+- ✅ **Real XBTS Payments** - Actual XBTSX.NCH transactions on XBTS DEX
+- ✅ **Webhook Support** - Optional payment notifications
+- ✅ **LocalStorage** - Configuration persists in browser
+
+### Getting Started
+
+#### 1. Start the Shop Server
+
+```bash
+./manage.sh start shop
+```
+
+Check the port:
+```bash
+./manage.sh status shop
+```
+
+Access at: `http://127.0.0.1:[PORT]/shop.html`
+
+#### 2. Configure Your Shop
+
+Click the **⚙️ Configure** button in the header.
+
+**Required Fields:**
+- **Shop Name** - Your store's display name
+- **Shop Description** - Brief description of your services
+- **XBTS Payment Address** - Your XBTS account name (where payments are sent)
+- **Products** - At least one product with name, price, and emoji
+
+**Optional Fields:**
+- **Payment Memo Prefix** - Customize order reference prefix (default: ORDER)
+- **Webhook URL** - URL to receive payment notifications (must be publicly accessible)
+
+#### 3. Add Products
+
+Click **+ Add Product** to add items to your catalog.
+
+For each product:
+- **Emoji** - Visual icon (e.g., 🎁, 💻, 🌐)
+- **Name** - Product name
+- **Description** - Brief description
+- **Price** - Price in NCH (XBTSX.NCH)
+
+#### 4. Save Configuration
+
+Click **Save Configuration**. Your shop is now live!
+
+Configuration is saved to browser LocalStorage and persists across sessions.
+
+### Making a Sale
+
+#### Customer Flow
+
+1. Customer browses products
+2. Adds items to cart
+3. Clicks "Proceed to Checkout"
+4. Receives payment instructions:
+   - XBTS account to send to
+   - Exact NCH amount
+   - Order reference memo
+
+#### Payment Verification
+
+**Without Webhook:**
+- Customer sends payment via XBTS wallet
+- You manually verify transaction on XBTS blockchain
+- Confirm order fulfillment manually
+
+**With Webhook:**
+- Customer sends payment
+- Your webhook endpoint receives notification
+- Automated order processing
+
+### Webhook Integration
+
+If you have a publicly accessible server, you can receive automated payment notifications.
+
+**Webhook Payload Example:**
+```json
+{
+  "orderId": "ORDER-1234567890",
+  "amount": "150.00",
+  "currency": "XBTSX.NCH",
+  "paymentAddress": "your-xbts-account",
+  "memo": "ORDER-ORDER-1234567890",
+  "timestamp": "2026-03-11T23:00:00Z",
+  "status": "confirmed"
+}
+```
+
+Your webhook endpoint should:
+1. Verify the payment on XBTS blockchain
+2. Match the order ID and amount
+3. Process the order
+4. Return HTTP 200 status
+
+### Security Best Practices
+
+1. **Verify All Payments** - Always check XBTS blockchain before fulfilling orders
+2. **Use Unique Memos** - Each order has a unique reference
+3. **Webhook Security** - Validate webhook signatures if implementing
+4. **Backup Configuration** - Export your config periodically
+5. **HTTPS Only** - Use HTTPS for webhook endpoints
+
+### Troubleshooting
+
+**Shop won't load:**
+- Check server is running: `./manage.sh status shop`
+- Clear browser cache and reload
+
+**Configuration not saving:**
+- Check browser LocalStorage is enabled
+- Try different browser
+- Check browser console for errors
+
+**Payments not confirming:**
+- Verify XBTS account name is correct
+- Check memo format matches order ID
+- Confirm payment on XBTS blockchain explorer
+
+### Export/Import Configuration
+
+**Export:**
+```javascript
+// In browser console
+console.log(localStorage.getItem('ness-shop-config'));
+// Copy the output
+```
+
+**Import:**
+```javascript
+// In browser console
+localStorage.setItem('ness-shop-config', 'PASTE_CONFIG_HERE');
+// Reload page
+```
+
+---
+
+## Guide en Français
+
+### Aperçu
+
+NESS Shop est une application de commerce souverain auto-hébergée qui accepte les paiements XBTSX.NCH (NESS Coin Hours) sur la bourse décentralisée XBTS. Toutes les données sont stockées localement dans votre navigateur - aucun serveur externe, aucun suivi, confidentialité totale.
+
+### Fonctionnalités Principales
+
+- ✅ **Aucun Mock ou Placeholder** - Toutes les données proviennent de votre configuration
+- ✅ **Auto-Hébergé** - Fonctionne entièrement sur votre machine locale
+- ✅ **Confidentialité d'Abord** - Aucune dépendance externe, aucun suivi
+- ✅ **Paiements XBTS Réels** - Transactions XBTSX.NCH réelles sur XBTS DEX
+- ✅ **Support Webhook** - Notifications de paiement optionnelles
+- ✅ **LocalStorage** - La configuration persiste dans le navigateur
+
+### Démarrage
+
+#### 1. Démarrer le Serveur Shop
+
+```bash
+./manage.sh start shop
+```
+
+Vérifier le port:
+```bash
+./manage.sh status shop
+```
+
+Accéder à: `http://127.0.0.1:[PORT]/shop.html`
+
+#### 2. Configurer Votre Boutique
+
+Cliquez sur le bouton **⚙️ Configure** dans l'en-tête.
+
+**Champs Obligatoires:**
+- **Nom de la Boutique** - Le nom d'affichage de votre magasin
+- **Description** - Brève description de vos services
+- **Adresse de Paiement XBTS** - Votre nom de compte XBTS (où les paiements sont envoyés)
+- **Produits** - Au moins un produit avec nom, prix et emoji
+
+**Champs Optionnels:**
+- **Préfixe Mémo** - Personnaliser le préfixe de référence de commande (défaut: ORDER)
+- **URL Webhook** - URL pour recevoir les notifications de paiement (doit être accessible publiquement)
+
+#### 3. Ajouter des Produits
+
+Cliquez sur **+ Add Product** pour ajouter des articles à votre catalogue.
+
+Pour chaque produit:
+- **Emoji** - Icône visuelle (ex: 🎁, 💻, 🌐)
+- **Nom** - Nom du produit
+- **Description** - Brève description
+- **Prix** - Prix en NCH (XBTSX.NCH)
+
+#### 4. Sauvegarder la Configuration
+
+Cliquez sur **Save Configuration**. Votre boutique est maintenant en ligne!
+
+La configuration est sauvegardée dans le LocalStorage du navigateur et persiste entre les sessions.
+
+### Réaliser une Vente
+
+#### Flux Client
+
+1. Le client parcourt les produits
+2. Ajoute des articles au panier
+3. Clique sur "Proceed to Checkout"
+4. Reçoit les instructions de paiement:
+   - Compte XBTS destinataire
+   - Montant exact en NCH
+   - Mémo de référence de commande
+
+#### Vérification du Paiement
+
+**Sans Webhook:**
+- Le client envoie le paiement via le portefeuille XBTS
+- Vous vérifiez manuellement la transaction sur la blockchain XBTS
+- Confirmez l'exécution de la commande manuellement
+
+**Avec Webhook:**
+- Le client envoie le paiement
+- Votre endpoint webhook reçoit la notification
+- Traitement automatisé de la commande
+
+### Intégration Webhook
+
+Si vous avez un serveur accessible publiquement, vous pouvez recevoir des notifications de paiement automatisées.
+
+**Exemple de Payload Webhook:**
+```json
+{
+  "orderId": "ORDER-1234567890",
+  "amount": "150.00",
+  "currency": "XBTSX.NCH",
+  "paymentAddress": "votre-compte-xbts",
+  "memo": "ORDER-ORDER-1234567890",
+  "timestamp": "2026-03-11T23:00:00Z",
+  "status": "confirmed"
+}
+```
+
+Votre endpoint webhook devrait:
+1. Vérifier le paiement sur la blockchain XBTS
+2. Faire correspondre l'ID de commande et le montant
+3. Traiter la commande
+4. Retourner un statut HTTP 200
+
+### Bonnes Pratiques de Sécurité
+
+1. **Vérifier Tous les Paiements** - Toujours vérifier la blockchain XBTS avant d'exécuter les commandes
+2. **Utiliser des Mémos Uniques** - Chaque commande a une référence unique
+3. **Sécurité Webhook** - Valider les signatures webhook si implémenté
+4. **Sauvegarder la Configuration** - Exporter votre config périodiquement
+5. **HTTPS Uniquement** - Utiliser HTTPS pour les endpoints webhook
+
+### Dépannage
+
+**La boutique ne charge pas:**
+- Vérifier que le serveur fonctionne: `./manage.sh status shop`
+- Vider le cache du navigateur et recharger
+
+**La configuration ne sauvegarde pas:**
+- Vérifier que le LocalStorage du navigateur est activé
+- Essayer un navigateur différent
+- Vérifier la console du navigateur pour les erreurs
+
+**Les paiements ne se confirment pas:**
+- Vérifier que le nom du compte XBTS est correct
+- Vérifier que le format du mémo correspond à l'ID de commande
+- Confirmer le paiement sur l'explorateur de blockchain XBTS
+
+### Exporter/Importer la Configuration
+
+**Exporter:**
+```javascript
+// Dans la console du navigateur
+console.log(localStorage.getItem('ness-shop-config'));
+// Copier la sortie
+```
+
+**Importer:**
+```javascript
+// Dans la console du navigateur
+localStorage.setItem('ness-shop-config', 'COLLER_CONFIG_ICI');
+// Recharger la page
+```
+
+---
+
+## Technical Details / Détails Techniques
+
+### Data Storage / Stockage des Données
+
+All configuration is stored in browser LocalStorage under the key `ness-shop-config`.
+
+Toutes les configurations sont stockées dans le LocalStorage du navigateur sous la clé `ness-shop-config`.
+
+### Payment Flow / Flux de Paiement
+
+1. Customer creates order / Le client crée une commande
+2. System generates unique order ID / Le système génère un ID de commande unique
+3. Payment instructions displayed / Instructions de paiement affichées
+4. Customer sends XBTSX.NCH to merchant address / Le client envoie XBTSX.NCH à l'adresse du commerçant
+5. Merchant verifies on blockchain / Le commerçant vérifie sur la blockchain
+6. Order fulfilled / Commande exécutée
+
+### XBTS Integration / Intégration XBTS
+
+- **Currency**: XBTSX.NCH (NESS Coin Hours)
+- **Network**: XBTS Decentralized Exchange
+- **Confirmation**: 1-3 minutes typical
+- **Fees**: Network fees apply
+
+### Support
+
+For technical support or questions:
+- GitHub: https://github.com/privateness-network
+- Documentation: See README.md and USAGE.md
+
+Pour le support technique ou questions:
+- GitHub: https://github.com/privateness-network
+- Documentation: Voir README.md et USAGE.md
