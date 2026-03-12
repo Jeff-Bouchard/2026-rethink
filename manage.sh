@@ -35,6 +35,33 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+http_get() {
+    local url=$1
+    python - "$url" <<'PY'
+import sys
+from urllib.request import urlopen
+
+url = sys.argv[1]
+with urlopen(url, timeout=10) as response:
+    data = response.read().decode("utf-8", errors="replace")
+    sys.stdout.buffer.write(data.encode("utf-8", errors="replace"))
+PY
+}
+
+http_get_json() {
+    local url=$1
+    python - "$url" <<'PY'
+import json
+import sys
+from urllib.request import urlopen
+
+url = sys.argv[1]
+with urlopen(url, timeout=10) as response:
+    data = json.loads(response.read().decode("utf-8"))
+    print(json.dumps(data))
+PY
+}
+
 # Extract port from log file
 extract_port_from_log() {
     local log_file=$1
@@ -300,6 +327,97 @@ logs_shop() {
     fi
 }
 
+test_demo() {
+    local pid=$(get_pid "$DEMO_PID_FILE")
+    local port=$(extract_port_from_log demo_server.log)
+
+    if ! is_running "$pid"; then
+        log_error "Demo E2E failed: server is not running"
+        return 1
+    fi
+
+    if [ -z "$port" ]; then
+        log_error "Demo E2E failed: could not determine demo port"
+        return 1
+    fi
+
+    log_info "E2E demo check on http://127.0.0.1:$port"
+
+    local body
+    if ! body=$(http_get "http://127.0.0.1:$port/"); then
+        log_error "Demo E2E failed: HTTP request to demo root failed"
+        return 1
+    fi
+
+    if ! printf '%s' "$body" | grep -q 'Privateness.network'; then
+        log_error "Demo E2E failed: response does not contain expected Privateness.network marker"
+        return 1
+    fi
+
+    log_success "Demo E2E passed"
+    return 0
+}
+
+test_shop() {
+    local pid=$(get_pid "$SHOP_PID_FILE")
+    local port=$(extract_port_from_log shop_server.log)
+
+    if ! is_running "$pid"; then
+        log_error "Shop E2E failed: server is not running"
+        return 1
+    fi
+
+    if [ -z "$port" ]; then
+        log_error "Shop E2E failed: could not determine shop port"
+        return 1
+    fi
+
+    if [ ! -f "ness_shop.db" ]; then
+        log_error "Shop E2E failed: database file ness_shop.db not found"
+        return 1
+    fi
+
+    log_info "E2E shop check on http://127.0.0.1:$port/shop.html"
+
+    local shop_html
+    if ! shop_html=$(http_get "http://127.0.0.1:$port/shop.html"); then
+        log_error "Shop E2E failed: HTTP request to shop frontend failed"
+        return 1
+    fi
+
+    if ! printf '%s' "$shop_html" | grep -q 'NESS Shop'; then
+        log_error "Shop E2E failed: shop frontend missing expected NESS Shop marker"
+        return 1
+    fi
+
+    local config_json
+    if ! config_json=$(http_get_json "http://127.0.0.1:$port/api/config"); then
+        log_error "Shop E2E failed: /api/config did not return valid JSON"
+        return 1
+    fi
+
+    local products_json
+    if ! products_json=$(http_get_json "http://127.0.0.1:$port/api/products"); then
+        log_error "Shop E2E failed: /api/products did not return valid JSON"
+        return 1
+    fi
+
+    log_info "Config payload: $config_json"
+    log_info "Products payload: $products_json"
+    log_success "Shop E2E passed"
+    return 0
+}
+
+test_all() {
+    log_info "Running full E2E suite..."
+    echo ""
+    test_demo
+    echo ""
+    test_shop
+    echo ""
+    log_success "All E2E tests passed"
+}
+
 # Show usage
 usage() {
     cat << EOF
@@ -312,6 +430,7 @@ Commands:
   stop [service]     Stop server(s)
   restart [service]  Restart server(s)
   status [service]   Show server status
+  test [service]     Run end-to-end checks
   logs [service]     Tail server logs (Ctrl+C to exit)
 
 Services:
@@ -325,6 +444,7 @@ Examples:
   $0 stop shop      Stop shop server only
   $0 restart all    Restart all servers
   $0 status         Show status of all servers
+  $0 test all       Run full E2E suite
   $0 logs demo      Tail demo server logs
 
 EOF
@@ -365,6 +485,14 @@ main() {
                 demo) status_demo ;;
                 shop) status_shop ;;
                 all) status_all ;;
+                *) log_error "Unknown service: $service"; usage; exit 1 ;;
+            esac
+            ;;
+        test)
+            case "$service" in
+                demo) test_demo ;;
+                shop) test_shop ;;
+                all) test_all ;;
                 *) log_error "Unknown service: $service"; usage; exit 1 ;;
             esac
             ;;
