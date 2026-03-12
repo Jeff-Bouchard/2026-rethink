@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privateness.network x PayRam — Sovereign Infrastructure + Commerce</title>
+  <meta name="description" content="Technical demonstration of Privateness.network with integrated PayRam payments layer for sovereign agent and human commerce." />
+  <style>
+    :root {
+      --bg-0: #05070b;
+      --bg-1: #0b1119;
+      --bg-2: #0f1724;
+      --card: #0d1520;
+      --card-2: #101a29;
+      --text: #e8eef7;
+      --muted: #91a2ba;
+      --line: #243449;
+      --sky: #40c0ff;
+      --amber: #ffba52;
+      --mint: #26d7a1;
+      --violet: #a98bff;
+      --danger: #ff6474;
+      --ok: #6cf0a2;
+      --warn: #ffba52;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Inter, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1100px 640px at 85% -10%, rgba(33, 102, 173, 0.25), transparent 62%),
+        radial-gradient(900px 500px at -8% 12%, rgba(14, 119, 89, 0.22), transparent 56%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 26%, var(--bg-0));
+      line-height: 1.55;
+      letter-spacing: 0.1px;
+    }
+
+    .container {
+      width: min(1180px, 92vw);
+      margin-inline: auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 10, 16, 0.86);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      min-height: 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 1.02rem;
+      letter-spacing: 0.45px;
+      white-space: nowrap;
+    }
+
+    .brand .accent { color: var(--sky); }
+    .brand .payram { color: var(--violet); }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.92rem;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 6px 10px;
+      transition: 120ms ease;
+    }
+
+    nav a:hover {
+      color: var(--text);
+      border-color: var(--line);
+      background: #111b2a;
+    }
+
+    section {
+      padding: 52px 0;
+      border-bottom: 1px solid rgba(36, 52, 73, 0.45);
+    }
+
+    .hero {
+      padding-top: 72px;
+      padding-bottom: 40px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--sky);
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 1.2px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 16ch;
+      line-height: 1.08;
+      font-size: clamp(2rem, 5vw, 4.35rem);
+    }
+
+    .hero-copy {
+      margin-top: 18px;
+      color: var(--muted);
+      max-width: 76ch;
+      font-size: 1.02rem;
+    }
+
+    .hero-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 11px 14px;
+      color: var(--text);
+      background: #0f1826;
+      font-weight: 600;
+    }
+
+    .button.primary {
+      background: linear-gradient(180deg, #183456, #10233b);
+      border-color: #2e537f;
+    }
+
+    .impact-grid,
+    .stack-grid,
+    .payram-grid,
+    .deployment-grid,
+    .admin-grid,
+    .roadmap-grid,
+    .flow-grid,
+    .meta-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .impact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 26px; }
+    .stack-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 20px; }
+    .payram-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; }
+    .deployment-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; }
+    .admin-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; }
+    .roadmap-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 18px; }
+    .flow-grid { grid-template-columns: 1.1fr 0.9fr; margin-top: 18px; }
+    .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
+
+    .card,
+    .phase,
+    .meta-block,
+    .impact,
+    .layer {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--card-2), var(--card));
+      padding: 16px;
+    }
+
+    .impact .label,
+    .phase-id,
+    .tag {
+      display: inline-block;
+      border: 1px solid #36556f;
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: #a4dbff;
+      font-size: 0.74rem;
+      margin-bottom: 8px;
+    }
+
+    .impact .value {
+      font-size: 1.16rem;
+      font-weight: 700;
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: clamp(1.4rem, 3vw, 2.05rem);
+    }
+
+    .section-sub {
+      margin: 0;
+      color: var(--muted);
+      max-width: 78ch;
+    }
+
+    .layer h3,
+    .card h3,
+    .card h4,
+    .phase h4,
+    .meta-block h4 {
+      margin: 0 0 8px;
+    }
+
+    .layer p,
+    .card p,
+    .meta-block p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .layer .role {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .layer-list,
+    .phase ul,
+    .meta-block ul,
+    .checklist,
+    .flow-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      display: grid;
+      gap: 6px;
+      font-size: 0.92rem;
+    }
+
+    .stack-grid .layer:nth-child(1) .tag { color: #9eddff; }
+    .stack-grid .layer:nth-child(2) .tag { color: #ffd08c; border-color: #705733; }
+    .stack-grid .layer:nth-child(3) .tag { color: #8ff0c9; border-color: #2f6a56; }
+    .stack-grid .layer:nth-child(4) .tag { color: #d6c7ff; border-color: #56478f; }
+
+    .architecture {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #09111c;
+    }
+
+    .architecture-row {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .architecture-row:last-child { border-bottom: 0; }
+
+    .architecture-label {
+      padding: 14px;
+      background: #0d1624;
+      font-weight: 700;
+    }
+
+    .architecture-value {
+      padding: 14px;
+      color: var(--muted);
+    }
+
+    .phase-id { margin-bottom: 10px; }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      margin-right: 8px;
+      background: var(--ok);
+    }
+
+    .status-warn { background: var(--warn); }
+    .status-risk { background: var(--danger); }
+
+    .console {
+      margin-top: 18px;
+      background: #071019;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .console-head {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #0d1623;
+      color: #b2c3d9;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.84rem;
+    }
+
+    .console-body {
+      padding: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88rem;
+      color: #bdd2e8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      padding: 26px 0 44px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-bottom: 0;
+    }
+
+    .checklist {
+      margin-top: 12px;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0a1320;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    @media (max-width: 1100px) {
+      .stack-grid,
+      .roadmap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 920px) {
+      .impact-grid,
+      .payram-grid,
+      .deployment-grid,
+      .admin-grid,
+      .meta-grid,
+      .flow-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner { align-items: flex-start; }
+      nav { justify-content: flex-start; }
+      .impact-grid,
+      .stack-grid,
+      .payram-grid,
+      .deployment-grid,
+      .admin-grid,
+      .roadmap-grid,
+      .meta-grid,
+      .flow-grid { grid-template-columns: 1fr; }
+      .architecture-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">Privateness<span class="accent">.network</span> × <span class="payram">PayRam</span></div>
+      <nav>
+        <a href="#thesis">Thesis</a>
+        <a href="#stack">Stack</a>
+        <a href="#payram">PayRam Layer</a>
+        <a href="#flow">Payment Flow</a>
+        <a href="#deployment">Deployment</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#admin-dashboard">Admin Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="thesis" class="hero container">
+      <span class="eyebrow">Sovereign Infra + Sovereign Commerce</span>
+      <h1>The post-ICANN, post-ISP stack needs a native payment rail.</h1>
+      <p class="hero-copy">
+        Privateness.network owns the security-critical substrate: transport via Skywire, naming and trust anchors via Emercoin, and isolated execution via NESS. PayRam fits above that substrate as the sovereign payments and settlement layer for human checkout, agent commerce, payouts, webhooks, and treasury automation.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#stack">Inspect architecture</a>
+        <a class="button" href="#flow">View payment flow</a>
+      </div>
+
+      <div class="impact-grid">
+        <article class="impact">
+          <div class="label">Base Threat Model</div>
+          <div class="value" style="color: var(--danger);">State hostile network + naming interference</div>
+        </article>
+        <article class="impact">
+          <div class="label">Core Response</div>
+          <div class="value" style="color: var(--sky);">Own transport, resolution, execution</div>
+        </article>
+        <article class="impact">
+          <div class="label">Commercial Response</div>
+          <div class="value" style="color: var(--violet);">Self-hosted PayRam gateway + MCP automation</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="stack" class="container">
+      <h2 class="section-title">Integrated Architecture</h2>
+      <p class="section-sub">
+        The correct framing is layered, not blended. PayRam does not replace the Privateness.network sovereignty thesis. It operationalizes payments on top of the stack.
+      </p>
+
+      <div class="stack-grid">
+        <article class="layer">
+          <span class="tag">Layer 01</span>
+          <h3>Skywire</h3>
+          <span class="role">Transport sovereignty</span>
+          <ul class="layer-list">
+            <li>Source-routed encrypted mesh.</li>
+            <li>Removes legacy ISP trust and routing chokepoints.</li>
+            <li>Hardens against DPI, BGP abuse, and access-layer censorship.</li>
+          </ul>
+        </article>
+        <article class="layer">
+          <span class="tag">Layer 02</span>
+          <h3>Emercoin (EMC)</h3>
+          <span class="role">Naming + trust anchors</span>
+          <ul class="layer-list">
+            <li>NVS-backed naming and identity data.</li>
+            <li>Decentralized PKI and resolvable trust surfaces.</li>
+            <li>AuxPoW framed as neutral security pool, not revenue story.</li>
+          </ul>
+        </article>
+        <article class="layer">
+          <span class="tag">Layer 03</span>
+          <h3>NESS (Fiber)</h3>
+          <span class="role">Execution sovereignty</span>
+          <ul class="layer-list">
+            <li>Isolated execution domains and appchain-style scaling.</li>
+            <li>Obelisk trust topology instead of hash monopoly dependence.</li>
+            <li>Application logic remains insulated from shared-state congestion.</li>
+          </ul>
+        </article>
+        <article class="layer">
+          <span class="tag">Layer 04</span>
+          <h3>PayRam</h3>
+          <span class="role">Commerce and settlement layer</span>
+          <ul class="layer-list">
+            <li>Self-hosted crypto payment gateway with MCP workflows.</li>
+            <li>Human checkout, agent payment ops, webhooks, payouts.</li>
+            <li>Stablecoin-native multi-chain commerce without hosted processors.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="architecture">
+        <div class="architecture-row">
+          <div class="architecture-label">Security Base</div>
+          <div class="architecture-value">Skywire + EMC + NESS define routing privacy, naming trust, and execution guarantees.</div>
+        </div>
+        <div class="architecture-row">
+          <div class="architecture-label">Payments Surface</div>
+          <div class="architecture-value">PayRam exposes payment links, invoices, monitoring, payouts, and webhook/event handling as a self-hosted service.</div>
+        </div>
+        <div class="architecture-row">
+          <div class="architecture-label">Agent Interface</div>
+          <div class="architecture-value">PayRam MCP helper teaches an MCP-aware client how to retrofit an existing project, scaffold a new app, test readiness, and wire payment/payout/webhook flows.</div>
+        </div>
+        <div class="architecture-row">
+          <div class="architecture-label">Strategic Positioning</div>
+          <div class="architecture-value">Privateness.network remains the infrastructure monopoly thesis. PayRam is the operator-owned commerce primitive that monetizes that infrastructure.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="payram" class="container">
+      <h2 class="section-title">What the deeper PayRam research materially changes</h2>
+      <p class="section-sub">
+        Official PayRam sources show this is not just a hosted checkout endpoint. It is a self-hosted gateway, with MCP tooling specifically for project assessment, scaffolding, readiness testing, payment integration, payout integration, referral routes, and webhook handling.
+      </p>
+
+      <div class="payram-grid">
+        <article class="card">
+          <h3>MCP role is integration orchestration</h3>
+          <p>The hosted MCP server at <code>mcp.payram.com</code> teaches an MCP-aware client how to integrate against your own self-hosted PayRam deployment.</p>
+        </article>
+        <article class="card">
+          <h3>Deployment is self-hosted</h3>
+          <p>Official scripts describe Docker-based deployment, automatic dependency install, SSL/TLS setup, PostgreSQL support, and headless agent flows.</p>
+        </article>
+        <article class="card">
+          <h3>Payment ops are broader than checkout</h3>
+          <p>Research confirmed generated flows for payment SDK snippets, HTTP snippets, payout handling, webhook handlers, event routers, and mock webhook testing.</p>
+        </article>
+      </div>
+
+      <div class="console">
+        <div class="console-head">Official PayRam MCP / workflow model</div>
+        <div id="payram-console" class="console-body"></div>
+      </div>
+    </section>
+
+    <section id="flow" class="container">
+      <h2 class="section-title">Integrated Payment Flow</h2>
+      <p class="section-sub">
+        This is the correct demo story for founders, operators, and developers: the commerce path lives above the sovereign network path, not instead of it.
+      </p>
+
+      <div class="flow-grid">
+        <article class="card">
+          <h3>Flow: agent or user payment lifecycle</h3>
+          <ol class="flow-list">
+            <li>Agent or application requests invoice creation through PayRam MCP-assisted integration logic.</li>
+            <li>Self-hosted PayRam gateway creates payment surface for supported chain/token policy.</li>
+            <li>Payer settles on-chain to the controlled payment path.</li>
+            <li>Gateway detects status transition and emits webhook/event updates to NESS application logic.</li>
+            <li>NESS appchain records business state change; EMC can anchor naming/trust metadata; Skywire protects transport path where applicable.</li>
+            <li>Payouts, treasury sweeps, referrals, and analytics remain operator-owned.</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>Why this matters strategically</h3>
+          <ul class="flow-list">
+            <li>No forced hosted payment processor in the critical path.</li>
+            <li>No dilution of the infrastructure sovereignty message.</li>
+            <li>Direct path from secure network thesis to monetizable applications.</li>
+            <li>Agent commerce becomes native, not bolted on later.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="deployment" class="container">
+      <h2 class="section-title">Deployment Model</h2>
+      <p class="section-sub">
+        Official PayRam materials describe a self-hosted stack with Docker-based deployment, SSL handling, database support, and agent/headless setup scripts. This makes it suitable for a controlled operator environment rather than a SaaS dependency.
+      </p>
+
+      <div class="deployment-grid">
+        <article class="card">
+          <h4>Runtime Requirements</h4>
+          <ul class="flow-list">
+            <li>Docker + Compose automated by script.</li>
+            <li>PostgreSQL client/tooling support.</li>
+            <li>SSL certificate utilities.</li>
+            <li>Official docs cite 2GB minimum / 4GB recommended baseline for scripts.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h4>MCP Exposure</h4>
+          <ul class="flow-list">
+            <li>Helper repo documents HTTP + SSE transports.</li>
+            <li>Typical endpoint model: <code>/mcp</code> and <code>/mcp/sse</code>.</li>
+            <li>Used to teach agents how to integrate and validate connectivity.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h4>Integration Surfaces</h4>
+          <ul class="flow-list">
+            <li>Assess retrofit for existing projects.</li>
+            <li>Scaffold a fresh app.</li>
+            <li>Test readiness against real credentials.</li>
+            <li>Generate payment, payout, referral, and webhook wiring.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="roadmap" class="container">
+      <h2 class="section-title">Execution Roadmap</h2>
+      <p class="section-sub">
+        The roadmap is now aligned to the integrated stack: first prove the sovereign substrate, then ship the payment and settlement layer as an operator-owned commercial primitive.
+      </p>
+
+      <div class="roadmap-grid">
+        <article class="phase">
+          <span class="phase-id">Phase 01 · 0-60d</span>
+          <h4>Substrate Proof</h4>
+          <ul>
+            <li>Finalize architecture note for Skywire, EMC, NESS roles.</li>
+            <li>Produce baseline latency, resolution, and finality metrics.</li>
+            <li>Publish reproducible deployment artifacts.</li>
+          </ul>
+        </article>
+        <article class="phase">
+          <span class="phase-id">Phase 02 · 60-120d</span>
+          <h4>Operator Bootstrap</h4>
+          <ul>
+            <li>Grow relay/operator footprint and visibility tooling.</li>
+            <li>Ship EMC-backed naming / trust workflows.</li>
+            <li>Bring first NESS isolated business workload online.</li>
+          </ul>
+        </article>
+        <article class="phase">
+          <span class="phase-id">Phase 03 · 120-210d</span>
+          <h4>PayRam Commerce Integration</h4>
+          <ul>
+            <li>Deploy PayRam in controlled environment.</li>
+            <li>Wire invoices, payouts, webhooks, treasury policies.</li>
+            <li>Expose agent payment ops through MCP-assisted integration.</li>
+          </ul>
+        </article>
+        <article class="phase">
+          <span class="phase-id">Phase 04 · 210-365d</span>
+          <h4>Production Sovereignty</h4>
+          <ul>
+            <li>Scale multi-region relay and payment operations.</li>
+            <li>Run adversarial disruption drills.</li>
+            <li>Publish uptime, incident, and security transparency reports.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-block">
+          <h4>Founder Metrics</h4>
+          <ul>
+            <li>Active operators / relays / jurisdictions.</li>
+            <li>NVS resolution success rate and trust issuance SLA.</li>
+            <li>Merchant/agent payment volume through PayRam layer.</li>
+            <li>Bridge exposure caps and treasury policy compliance.</li>
+          </ul>
+        </article>
+        <article class="meta-block">
+          <h4>Developer Metrics</h4>
+          <ul>
+            <li>Webhook delivery success and mean reconciliation delay.</li>
+            <li>NESS state transition time after payment confirmation.</li>
+            <li>Agent workflow success rate for PayRam MCP guided flows.</li>
+            <li>Deployment reproducibility and MTTR for gateway incidents.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="admin-dashboard" class="container">
+      <h2 class="section-title">Admin Dashboard</h2>
+      <p class="section-sub">
+        Founder-grade operator view: what is live, what is blocked, what risk dominates, and what the next execution gates are.
+      </p>
+
+      <div class="admin-grid">
+        <article class="card">
+          <h4><span id="status-dot-program" class="status-dot"></span>Program Status</h4>
+          <p id="program-phase"></p>
+          <p id="program-blocker" style="margin-top:8px;"></p>
+        </article>
+        <article class="card">
+          <h4><span id="status-dot-kpi" class="status-dot status-warn"></span>Infrastructure + Commerce KPIs</h4>
+          <p id="kpi-mesh-latency"></p>
+          <p id="kpi-payment-webhooks" style="margin-top:8px;"></p>
+        </article>
+        <article class="card">
+          <h4><span id="status-dot-risk" class="status-dot status-risk"></span>Risk Posture</h4>
+          <p id="risk-top"></p>
+          <p id="risk-mitigation" style="margin-top:8px;"></p>
+        </article>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-block">
+          <h4>Decision Gates (Founder)</h4>
+          <ul id="founder-gates"></ul>
+        </article>
+        <article class="meta-block">
+          <h4>Execution Queue (Developer)</h4>
+          <ul id="developer-queue"></ul>
+        </article>
+      </div>
+
+      <div class="checklist" id="integration-checklist"></div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <div>Single-file, dependency-free technical demo rebuilt around the researched Privateness.network × PayRam integration model.</div>
+  </footer>
+
+  <script id="payram-research-data" type="application/json">
+  {
+    "officialResearch": [
+      "PayRam MCP helper is positioned as an integration-teaching MCP for MCP-aware clients, not merely a checkout endpoint.",
+      "Official guided workflows cover project assessment, scaffolding, readiness testing, and wiring payments, payouts, referrals, and webhooks.",
+      "Official scripts describe Docker-based deployment, SSL utilities, PostgreSQL support, and headless agent setup flows.",
+      "Hosted MCP can guide integration against a self-hosted PayRam deployment, preserving operator ownership of the payment stack."
+    ],
+    "dashboard": {
+      "program": {
+        "phase": "03 / 04",
+        "state": "PayRam commerce integration design-ready",
+        "blocker": "Need production webhook policy, payout policy, and treasury segregation model finalized",
+        "status": "ok"
+      },
+      "kpis": {
+        "meshLatency": "Mesh transport target <150ms p50 across primary relay corridors",
+        "paymentWebhooks": "Webhook reconciliation target >99.9% delivery with application state sync <30s",
+        "status": "warn"
+      },
+      "risk": {
+        "top": "Commercial layer complexity starts to dilute core sovereignty narrative if payment ops are presented as the base layer",
+        "mitigation": "Keep strict layer separation in docs, UI, and product architecture: Privateness base layer first, PayRam payment layer second",
+        "status": "risk"
+      },
+      "founderGates": [
+        "Approve PayRam as the official commerce layer rather than allowing payment stack sprawl",
+        "Set treasury and payout policy boundaries before public merchant onboarding",
+        "Decide whether first go-to-market is agent commerce, merchant infra, or high-risk sovereign operators"
+      ],
+      "developerQueue": [
+        "Implement signed webhook receiver and deterministic idempotency for payment events",
+        "Model NESS application state transitions triggered by PayRam settlement confirmations",
+        "Add environment-specific config for self-hosted gateway, MCP endpoint, and operator dashboards"
+      ],
+      "integrationChecklist": [
+        "[OK] Sovereignty base layer remains distinct from commerce layer",
+        "[OK] PayRam represented as self-hosted payment gateway + MCP integration helper",
+        "[OK] Payment, payout, webhook, and treasury operations included",
+        "[PENDING] Real operational telemetry and production policy engine wiring"
+      ]
+    }
+  }
+  </script>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        var targetId = link.getAttribute('href');
+        var target = document.querySelector(targetId);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    (function hydrateDemo() {
+      var raw = document.getElementById('payram-research-data');
+      if (!raw) return;
+
+      var data;
+      try {
+        data = JSON.parse(raw.textContent);
+      } catch (error) {
+        console.error('Invalid research JSON', error);
+        return;
+      }
+
+      var consoleEl = document.getElementById('payram-console');
+      if (consoleEl) {
+        consoleEl.textContent = data.officialResearch.map(function (line, index) {
+          return '[' + (index + 1) + '] ' + line;
+        }).join('\n\n');
+      }
+
+      function setText(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value;
+      }
+
+      function setStatus(id, status) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('status-warn', 'status-risk');
+        if (status === 'warn') el.classList.add('status-warn');
+        if (status === 'risk') el.classList.add('status-risk');
+      }
+
+      function fillList(id, items) {
+        var root = document.getElementById(id);
+        if (!root) return;
+        root.innerHTML = '';
+        (items || []).forEach(function (item) {
+          var li = document.createElement('li');
+          li.textContent = item;
+          root.appendChild(li);
+        });
+      }
+
+      function fillChecklist(id, items) {
+        var root = document.getElementById(id);
+        if (!root) return;
+        root.innerHTML = '';
+        (items || []).forEach(function (item) {
+          var li = document.createElement('li');
+          li.textContent = item;
+          root.appendChild(li);
+        });
+      }
+
+      var dashboard = data.dashboard;
+      setText('program-phase', 'Phase: ' + dashboard.program.phase + ' · ' + dashboard.program.state + '.');
+      setText('program-blocker', 'Current blocker: ' + dashboard.program.blocker + '.');
+      setStatus('status-dot-program', dashboard.program.status);
+
+      setText('kpi-mesh-latency', dashboard.kpis.meshLatency + '.');
+      setText('kpi-payment-webhooks', dashboard.kpis.paymentWebhooks + '.');
+      setStatus('status-dot-kpi', dashboard.kpis.status);
+
+      setText('risk-top', 'Top risk: ' + dashboard.risk.top + '.');
+      setText('risk-mitigation', 'Mitigation: ' + dashboard.risk.mitigation + '.');
+      setStatus('status-dot-risk', dashboard.risk.status);
+
+      fillList('founder-gates', dashboard.founderGates);
+      fillList('developer-queue', dashboard.developerQueue);
+      fillChecklist('integration-checklist', dashboard.integrationChecklist);
+    })();
+  </script>
+</body>
+</html>

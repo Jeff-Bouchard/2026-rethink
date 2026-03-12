@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privateness.network — Impossibly Secure Web Stack</title>
+  <meta name="description" content="Single-file technical demonstration for Privateness.network (Skywire, Emercoin, NESS)." />
+  <style>
+    :root {
+      --bg-0: #06080c;
+      --bg-1: #0b111a;
+      --bg-2: #121b28;
+      --text: #e8eef8;
+      --muted: #93a4bb;
+      --line: #203045;
+      --sky: #34bfff;
+      --amber: #ffb547;
+      --mint: #22d39f;
+      --danger: #ff5f6d;
+      --card: #0f1623;
+      --ok: #6dffb4;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", "SF Pro Text", "Helvetica Neue", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 80% -20%, #17305066 0%, transparent 60%),
+        radial-gradient(1000px 500px at -10% 10%, #123a3460 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 30%, var(--bg-0));
+      color: var(--text);
+      line-height: 1.55;
+      letter-spacing: 0.1px;
+    }
+
+    .container { width: min(1120px, 92vw); margin-inline: auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      background: #070b12cc;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      height: 62px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .brand em {
+      color: var(--sky);
+      font-style: normal;
+    }
+
+    nav {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      border: 1px solid transparent;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: 140ms ease;
+    }
+
+    nav a:hover { color: var(--text); border-color: var(--line); background: #0f1a2a; }
+
+    .hero {
+      padding: 72px 0 44px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      color: var(--sky);
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 1.2px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 4.8vw, 3.9rem);
+      line-height: 1.12;
+      max-width: 19ch;
+    }
+
+    .hero p {
+      margin-top: 18px;
+      max-width: 72ch;
+      color: var(--muted);
+    }
+
+    .impact-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 26px;
+    }
+
+    .impact {
+      background: linear-gradient(180deg, #111b2b, #0d1523);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .impact .label {
+      font-size: 0.73rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .impact .value {
+      margin-top: 6px;
+      font-size: 1.22rem;
+      font-weight: 700;
+    }
+
+    section { padding: 52px 0; }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: clamp(1.3rem, 3vw, 2rem);
+    }
+
+    .section-sub {
+      margin: 0;
+      color: var(--muted);
+      max-width: 76ch;
+    }
+
+    .problem-grid,
+    .econ-grid {
+      margin-top: 22px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .econ-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      min-height: 172px;
+    }
+
+    .card h3, .card h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+    .pillars {
+      margin-top: 22px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .pillar {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #101a2a, #0c1420);
+      padding: 16px;
+    }
+
+    .pillar-id {
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      min-height: 94px;
+    }
+
+    .p1 .pillar-id { color: var(--sky); }
+    .p2 .pillar-id { color: var(--amber); }
+    .p3 .pillar-id { color: var(--mint); }
+
+    .pillar h3 { margin: 0; font-size: 1.25rem; }
+    .pillar small { color: var(--muted); display: block; margin-top: 2px; margin-bottom: 10px; }
+
+    .tech-value {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .tv {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #0c1420;
+    }
+
+    .tv h4 {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text);
+    }
+
+    .tv p { margin: 0; color: var(--muted); font-size: 0.93rem; }
+
+    .quote {
+      margin-top: 24px;
+      border: 1px dashed #35506b;
+      border-radius: 14px;
+      padding: 16px;
+      background: #0f1827;
+      color: #c7d6ea;
+      font-style: italic;
+    }
+
+    .checklist {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .check {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0b1420;
+      padding: 10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9rem;
+    }
+
+    .check .ok { color: var(--ok); font-weight: 700; margin-right: 6px; }
+
+    .footer {
+      padding: 26px 0 46px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid #36556f;
+      background: #0f1f31;
+      color: #9dd8ff;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 980px) {
+      .impact-grid,
+      .problem-grid,
+      .econ-grid,
+      .tech-value { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner { height: auto; padding: 10px 0; align-items: flex-start; flex-direction: column; }
+      nav { justify-content: flex-start; }
+      .impact-grid,
+      .problem-grid,
+      .econ-grid,
+      .tech-value { grid-template-columns: 1fr; }
+      .pillar { grid-template-columns: 1fr; }
+      .pillar-id { min-height: 62px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">Privateness<em>.network</em> (NESS · EMC · Skywire)</div>
+      <nav>
+        <a href="#problem">Attack Surface</a>
+        <a href="#stack">Stack Ownership</a>
+        <a href="#economics">Economic Engine</a>
+        <a href="#reality">Investment Reality</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container" id="top">
+      <div class="kicker">Infrastructure Thesis</div>
+      <h1>The Impossibly Secure Web Stack</h1>
+      <p>
+        Privateness.network is a vertically integrated replacement for the legacy OSI trust model.
+        It decouples transport, naming, and execution from centralized ISPs, ICANN roots, and cloud bottlenecks.
+      </p>
+
+      <div class="impact-grid" aria-label="thesis highlights">
+        <article class="impact">
+          <div class="label">Threat Model</div>
+          <div class="value" style="color: var(--danger);">State-level network hostility</div>
+        </article>
+        <article class="impact">
+          <div class="label">Control Strategy</div>
+          <div class="value" style="color: var(--sky);">Own transport + resolution + execution</div>
+        </article>
+        <article class="impact">
+          <div class="label">Outcome</div>
+          <div class="value" style="color: var(--mint);">Unseizable, censorship-resistant stack</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="problem" class="container">
+      <h2 class="section-title">The Delusion of Web3 on Legacy Web2</h2>
+      <p class="section-sub">
+        Most “decentralized” systems still traverse centralized infrastructure. If fiber routes are disrupted,
+        BGP is poisoned, or DNS root control is abused, application-layer decentralization is operationally nullified.
+      </p>
+
+      <div class="problem-grid">
+        <article class="card">
+          <h3>BGP Hijack / Route Poisoning</h3>
+          <p>Traffic can be intercepted or blackholed through insecure legacy routing assumptions.</p>
+        </article>
+        <article class="card">
+          <h3>DNS Root and CA Centralization</h3>
+          <p>Global naming and certificate trust remain seizure-prone under centralized authority.</p>
+        </article>
+        <article class="card">
+          <h3>ISP-Level DPI and Blocking</h3>
+          <p>Protocol fingerprinting enables surveillance, selective throttling, and service denial.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="stack" class="container">
+      <h2 class="section-title">Three Pillars: Total Stack Ownership</h2>
+      <p class="section-sub">
+        The architecture is split into transport (Skywire), resolution/identity (Emercoin), and execution (NESS Fiber).
+        Each layer is designed to remove a legacy chokepoint.
+      </p>
+
+      <div class="pillars">
+        <article class="pillar p1">
+          <div class="pillar-id">01</div>
+          <div>
+            <h3>Skywire</h3>
+            <small>Transport Layer — source-routed, encrypted mesh</small>
+            <div class="tech-value">
+              <div class="tv">
+                <h4>The Tech</h4>
+                <p>Replaces IPv4/IPv6 assumptions with source-routed E2E encrypted mesh using ed25519 identity primitives.</p>
+              </div>
+              <div class="tv">
+                <h4>The Value</h4>
+                <p>Hardens against DPI, ISP-level censorship, and BGP hijacking by removing legacy route trust.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="pillar p2">
+          <div class="pillar-id">02</div>
+          <div>
+            <h3>Emercoin (EMC)</h3>
+            <small>Resolution & Identity Layer — decentralized NVS + AuxPoW security</small>
+            <div class="tech-value">
+              <div class="tv">
+                <h4>The Tech</h4>
+                <p>Substitutes DNS root and CA centralization with Name-Value Storage for naming and decentralized PKI anchoring.</p>
+              </div>
+              <div class="tv">
+                <h4>The Value</h4>
+                <p>AuxPoW links EMC security to Bitcoin-level hash economics, making hostile reorg attempts non-trivial at nation scale.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="pillar p3">
+          <div class="pillar-id">03</div>
+          <div>
+            <h3>NESS (Fiber)</h3>
+            <small>Execution Layer — Obelisk Web-of-Trust consensus</small>
+            <div class="tech-value">
+              <div class="tv">
+                <h4>The Tech</h4>
+                <p>Fiber architecture with Obelisk consensus avoids hash-power monopolies and silent chain reorg assumptions.</p>
+              </div>
+              <div class="tv">
+                <h4>The Value</h4>
+                <p>Isolated high-throughput chains deliver deterministic execution without systemic congestion or shared-state bloat.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="economics" class="container">
+      <h2 class="section-title">Economic Engine: Infrastructure-Native Yield</h2>
+      <p class="section-sub">Returns are modeled around operating real infrastructure primitives, not narrative-only token velocity.</p>
+
+      <div style="margin-top:14px;">
+        <span class="badge">Skywire Visor Transit Yield</span>
+        <span class="badge">EMC AuxPoW Secondary Revenue</span>
+        <span class="badge">XBTS DEX Liquidity Fees</span>
+        <span class="badge">EMC PoS Maturation Yield</span>
+      </div>
+
+      <div class="econ-grid">
+        <article class="card"><h4>Bandwidth Provisioning</h4><p>Node operators monetize packet transit over mesh links.</p></article>
+        <article class="card"><h4>Merged Mining</h4><p>SHA-256 miners capture EMC rewards without incremental energy overhead.</p></article>
+        <article class="card"><h4>DEX Liquidity</h4><p>XBTS pair liquidity captures fee flow with reserve proofs anchored through NVS records.</p></article>
+        <article class="card"><h4>Proof-of-Stake</h4><p>Mature EMC UTXOs can mint yield while strengthening chain participation.</p></article>
+      </div>
+    </section>
+
+    <section id="reality" class="container">
+      <h2 class="section-title">Investment Reality</h2>
+      <p class="section-sub">The proposition is acquisition of protocol surface area, not passive exposure to a single speculative asset.</p>
+      <div class="quote">
+        "You are not buying a token. You are acquiring foundational protocol layers of a post-ICANN, post-ISP internet."
+      </div>
+      <div class="checklist" aria-label="ownership checklist">
+        <div class="check"><span class="ok">[OK]</span> Transport ownership: Skywire mesh</div>
+        <div class="check"><span class="ok">[OK]</span> Resolution ownership: Emercoin NVS (+ Bitcoin-anchored security model)</div>
+        <div class="check"><span class="ok">[OK]</span> Execution ownership: NESS Fiber + Obelisk</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <div>Single-file demonstration generated from <code>ness-pitch.txt</code> content. No external CSS/JS dependencies.</div>
+  </footer>
+
+  <script>
+    // In-page smooth scroll without external dependencies.
+    document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        var targetId = link.getAttribute('href');
+        var target = document.querySelector(targetId);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
+</html>
